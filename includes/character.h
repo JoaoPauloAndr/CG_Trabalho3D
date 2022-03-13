@@ -12,9 +12,9 @@
 #define ARM_ANGLE_LIMIT     45
 #define SCALE               0.75
 //#define LEFT_ARM_ANGLE_LIMIT 23
-#define VEL                 0.5
+#define VEL                 0.75
 #define INC_DY              3
-#define JUMP_COUNTER_MAX    20
+#define JUMP_COUNTER_MAX    1.0//20
 #define GRAVITY             0.7
 #define INC_DIRECTION       1
 #define LEG_ANGLE_UP_LIMIT  35
@@ -50,7 +50,7 @@ class Character
     GLfloat upperLegAngle;
     GLfloat upperLegDelta;
     GLfloat gravityCounter;
-    GLint   jumpCounter;
+    GLfloat jumpCounter;
     bool frontColision;
     bool backColision;
     bool topColision;
@@ -280,19 +280,22 @@ public:
         return isGrounded;
     };
 
-    void Jump()
-    {
-        isJumping = true;
-    };
+    void Jump();
 
     bool getIsJumping()
     {
         return isJumping;
     };
 
-    GLint getJumCounter()
+    GLfloat getJumCounter()
     {
         return jumpCounter;
+    };
+
+    void resetJump()
+    {
+        isJumping = 0;
+        jumpCounter = JUMP_COUNTER_MAX;
     };
 };
 #endif

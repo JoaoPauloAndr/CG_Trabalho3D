@@ -83,10 +83,10 @@ void keyPress(unsigned char key, int x, int y)
       case ' ':
             keyStatus[(int)(' ')] = 1;
             break;
-      // case 'v':
-      // case 'V':
-      //       keyStatus[(int)('v')] = 1;
-      //       break;
+      case 'v':
+      case 'V':
+            keyStatus[(int)('v')] = 1;
+            break;
       case 'r':
       case 'R':
             keyStatus[(int)('r')] = 1;
@@ -154,26 +154,29 @@ void idle(void)
   //MoveY
   if(keyStatus[(int)(' ')])
   {
+    //player.MoveY(INC_DY);
+    //printf("pressed!\n");
     if(player.getIsGrounded())
     {
-      player.MoveY(INC_DY);
+      //player.MoveY(INC_DY);
       player.Jump();
     }
 
-    if(player.getIsJumping())
+    if(player.getIsJumping() && player.getJumCounter() > 0)
     {
-      if(player.getJumCounter() > 0)
-      {
-        player.MoveY(INC_DY);
-      }
+      player.Jump();
     }
-
   }
 
-  // if(keyStatus[(int)('v')])
-  // {
-  //   player.MoveY(-INC_DY);
-  // }
+  if(keyStatus[(int)(' ')] == 0)
+  {
+    player.resetJump();
+  }
+
+  if(keyStatus[(int)('v')])
+  {
+    player.MoveY(-INC_DY);
+  }
 
   //Control camera rotation
   if(keyStatus[(int)('x')] && camera_mode == 3)

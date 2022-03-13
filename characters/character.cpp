@@ -193,11 +193,34 @@ void Character::DrawCharacter(GLfloat gX, GLfloat gY, GLfloat head_radius)
 
 void Character::HandleInput(bool isRunning, GLfloat vel)
 {   
+    // if(isGrounded)
+    // {
+    //     printf("Grounded\n");
+    // }
+    // else
+    // {
+    //     printf("Not Grounded\n");  
+    // }
+
+    //printf("Jump counter = %.2f\n", jumpCounter);
+    
+    // if(isJumping)
+    // {
+    //     printf("is Jumping\n");
+    // }
+    // else
+    // {
+    //     printf("not Jumping\n");
+    // }      
     if(!isGrounded || topColision)
     {
-        gravityCounter += 0.05;
-        MoveY(-gravityCounter*GRAVITY);
-        jumpCounter--;
+        if(!isJumping)
+        {
+            //printf("Not jumping!\n");
+            gravityCounter += 0.045;
+            MoveY(-gravityCounter*GRAVITY);
+        }
+        //jumpCounter-= 0.1;
     }
     else
     {
@@ -322,8 +345,24 @@ void Character::moveArm(GLfloat angle)
 void Character::restoreGroundedStatus()
 {
     isGrounded = true;
+    //if(jumpCounter < 0){
     isJumping = false;
     jumpCounter = JUMP_COUNTER_MAX;
+    //}
+}
+
+void Character::Jump()
+{
+    isJumping = true;
+    //isGrounded = false;
+    GLfloat jump_val = jumpCounter * INC_DY;
+    jumpCounter -= 0.05;
+    if(jumpCounter < 0)
+    {
+        isJumping = false;
+        jump_val = 0;
+    }
+    MoveY(jump_val);
 }
 
 // void Character::checkIsGrounded()
