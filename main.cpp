@@ -15,7 +15,6 @@
 TODO:
   - Win (end of arena)
   - Display message and freeze the game
-  - Jump
   - Shoot
   - Illumination
   - Lights out mode
@@ -154,11 +153,9 @@ void idle(void)
   //MoveY
   if(keyStatus[(int)(' ')])
   {
-    //player.MoveY(INC_DY);
-    //printf("pressed!\n");
+
     if(player.getIsGrounded())
     {
-      //player.MoveY(INC_DY);
       player.Jump();
     }
 
@@ -185,8 +182,7 @@ void idle(void)
   }
 
   player.HandleInput(isRunning, vel);
-  
-  glutPostRedisplay();
+  //player.Shoot();
 }
 
 void display(void)
@@ -249,8 +245,29 @@ void display(void)
   glPushMatrix();
     player.Draw();
   glPopMatrix();
-  //player.setFrontColision();
-  //printf("No front colision.\n");
+
+  // glPushMatrix();
+  //   glTranslatef(1,1,10);
+  //   glShadeModel(GL_SMOOTH);
+
+  //   GLfloat materialEmission[] = { 0.00, 0.25, 0.00, 1};
+  //   GLfloat materialColor[] = { 0.0, 1.0, 0.0, 1};
+  //   GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1};
+  //   GLfloat mat_shininess[] = { 50.0 };
+  //   glColor3f(0,1,0);
+
+  //   glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
+  //   glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, materialColor);
+  //   glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+  //   glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+
+  //   glutSolidSphere(10, 20, 10);
+
+  //   glShadeModel(GL_FLAT);
+  // glPopMatrix();
+  player.Shoot();  
+  
+  glutPostRedisplay();
 
   glutSwapBuffers();
 }
@@ -279,6 +296,8 @@ void mouse(int button, int state, int x, int y)
 {
     if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
         //if(!shot) shot = player.Shoot();
+        player.Shoot();
+        //printf("Pew\n");
     }else if(button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN){
       //player.Jump();
     }

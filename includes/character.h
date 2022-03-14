@@ -21,6 +21,7 @@
 #define LEG_ANGLE_LO_LIMIT -30
 #define INC_ANGLE           3
 #define INC_ANGLE_UP_LEG    2
+#define SHOT_RADIUS         0.2
 //#define INC_LEFT_ARM_ANGLE  0.75
 
 class Character
@@ -43,8 +44,6 @@ class Character
     GLfloat armLength;
     GLfloat armWidth;  
     GLfloat armHeight;
-    //GLfloat leftArmAngle;
-    //GLfloat leftArmDelta;
     GLfloat armTheta;
     GLdouble direction;
     GLfloat upperLegAngle;
@@ -72,6 +71,7 @@ private:
     void DrawLeftArm();   
     void MoveX(GLfloat dx);
     void restoreGroundedStatus();
+    void drawShot();
 public:
     Character()
     {
@@ -213,6 +213,21 @@ public:
         return gZ + ((0.5 * torsoWidth) + (0.5 * armWidth)) * cos(direction * M_PI/180) + ((0.5 * torsoWidth) + (0.5 * armWidth)) * (-1) * sin(direction * M_PI/180);
     };
 
+    GLfloat getWeaponX()
+    {
+        return gX + ((armHeight + SHOT_RADIUS) * cos(direction * M_PI/180) * cos(armTheta * M_PI/180)) + ((0.5 * torsoWidth + 0.5 * armWidth) * sin(direction * M_PI/180));
+    };
+
+    GLfloat getWeaponY()
+    {
+        return gY + loLegHeight + upLegHeight + torsoHeight - (0.5 * armLength) + ((armHeight + SHOT_RADIUS) * sin(armTheta * M_PI/180)); //
+    };
+
+    GLfloat getWeaponZ()
+    {
+        return gZ + ((0.5 * torsoWidth + SHOT_RADIUS) * cos(direction * M_PI/180)) + ((armHeight + SHOT_RADIUS)  * (-1) * sin(direction * M_PI/180) * cos(armTheta * M_PI/180));
+    };
+
     GLfloat getDiretion()
     {
         return (GLfloat) direction;
@@ -297,5 +312,11 @@ public:
         isJumping = 0;
         jumpCounter = JUMP_COUNTER_MAX;
     };
+
+    void Shoot()
+    {
+        drawShot();
+    };
+    
 };
 #endif

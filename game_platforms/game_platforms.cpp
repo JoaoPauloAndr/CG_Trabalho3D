@@ -64,8 +64,6 @@ void colision(GLfloat platformX, GLfloat platformY, GLfloat platformBottom, GLfl
         *prevCol = true;
         charac->setBottomColision(j);
         charac->setNewGY(platformY+0.01);
-        //charac->unsetFrontColision();
-        //charac->unsetBackColision();
     }
     else
     {
@@ -106,19 +104,4 @@ void drawPlatforms(Platforms platforms, GLfloat arenaWidth, Character *player)
         colision(platformX, platformY, platformY - platformHeight, platformX + platformWidth, player, &previousColision, j);
         j++;
     }
-
-    // Platform plat = platforms.at(13);
-    // GLfloat platformX = plat.origin.x;
-    // GLfloat platformY = plat.origin.y;
-    // GLfloat platformWidth = plat.width;
-    // GLfloat platformHeight = plat.height;
-
-    // glPushMatrix();
-
-    // glTranslatef(platformX + platformWidth/2, platformY - platformHeight/2, arenaWidth/2);
-    // glScalef(platformWidth, platformHeight, arenaWidth);
-    // glutSolidCube(1);
-
-    // glPopMatrix();
-    // colision(platformX, platformY, platformY - platformHeight, platformX + platformWidth, player, &previousColision);
 }
