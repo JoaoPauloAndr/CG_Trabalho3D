@@ -27,6 +27,8 @@ Character_info player_info;
 Player player;
 Player *pPlayer = &player; 
 
+bool shoot = false;
+
 //Key status
 int keyStatus[256];
 
@@ -246,26 +248,44 @@ void display(void)
     player.Draw();
   glPopMatrix();
 
+  if(shoot)
+  {
+    player.Shoot();
+    shoot = false;
+  }
+
+  //Draw shots
+  for(unsigned int i = 0; i < BULLET_QTY; i++)
+  {
+    if(player.checkBulletValidity(i))
+    {
+      player.moveBullet(i);
+      player.drawBullet(i);
+    }
+  }
+
   // glPushMatrix();
-  //   glTranslatef(1,1,10);
-  //   glShadeModel(GL_SMOOTH);
+  //       //printf("Direction = %.2f\n", direction);
+  //       // printf("gZ + armHeight = %.2f\n", gZ + armHeight);
+  //       //printf("getWeaponZ = %.2f\n\n", getWeaponZ());
+  //       glTranslatef(player.getRightArmX(),player.getRightArmY(),player.getRightArmZ());
+  //       glShadeModel(GL_SMOOTH);
 
-  //   GLfloat materialEmission[] = { 0.00, 0.25, 0.00, 1};
-  //   GLfloat materialColor[] = { 0.0, 1.0, 0.0, 1};
-  //   GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1};
-  //   GLfloat mat_shininess[] = { 50.0 };
-  //   glColor3f(0,1,0);
+  //       GLfloat materialEmission[] = { 1.00, 0.25, 0.00, 1};
+  //       GLfloat materialColor[] = { 1.0, 0.0, 0.0, 1};
+  //       GLfloat mat_specular[] = { 1.0, 0.0, 1.0, 1};
+  //       GLfloat mat_shininess[] = { 50.0 };
+  //       glColor3f(0,1,0);
 
-  //   glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
-  //   glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, materialColor);
-  //   glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-  //   glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+  //       glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
+  //       glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, materialColor);
+  //       glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+  //       glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 
-  //   glutSolidSphere(10, 20, 10);
+  //       glutSolidSphere(SHOT_RADIUS, 20, 10);
 
-  //   glShadeModel(GL_FLAT);
-  // glPopMatrix();
-  player.Shoot();  
+  //       glShadeModel(GL_FLAT);
+  //   glPopMatrix();  
   
   glutPostRedisplay();
 
@@ -296,7 +316,7 @@ void mouse(int button, int state, int x, int y)
 {
     if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
         //if(!shot) shot = player.Shoot();
-        player.Shoot();
+        shoot = true;
         //printf("Pew\n");
     }else if(button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN){
       //player.Jump();

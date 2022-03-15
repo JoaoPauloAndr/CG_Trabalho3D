@@ -8,6 +8,7 @@
 #include <GL/glu.h>
 #include <GL/glut.h>
 #include <random>
+#include "shot.h"
 
 #define ARM_ANGLE_LIMIT     45
 #define SCALE               0.75
@@ -21,7 +22,8 @@
 #define LEG_ANGLE_LO_LIMIT -30
 #define INC_ANGLE           3
 #define INC_ANGLE_UP_LEG    2
-#define SHOT_RADIUS         0.2
+#define BULLET_QTY          10
+//#define SHOT_RADIUS         0.2
 //#define INC_LEFT_ARM_ANGLE  0.75
 
 class Character
@@ -50,6 +52,8 @@ class Character
     GLfloat upperLegDelta;
     GLfloat gravityCounter;
     GLfloat jumpCounter;
+    Shot    shots[BULLET_QTY];
+    unsigned int shots_fired;
     bool frontColision;
     bool backColision;
     bool topColision;
@@ -98,6 +102,7 @@ public:
         upperLegDelta = INC_ANGLE_UP_LEG;
         gravityCounter = 0;
         jumpCounter = JUMP_COUNTER_MAX;
+        shots_fired = 0;
         frontColision = false;
         backColision = false;
         topColision = false;
@@ -198,19 +203,19 @@ public:
         return (gY + loLegHeight + upLegHeight + torsoHeight + 2 * head_radius);
     };
 
-    GLfloat getRightArmY()
-    {
-        return gY + loLegHeight + upLegHeight + torsoHeight - head_radius + ((0.5 * armHeight + armLength) * sin(armTheta*M_PI/180)); //+ (sin(armTheta*M_PI/180));
-    };
-
     GLfloat getRightArmX()
     {
-        return gX + ((0.5) * armHeight * cos(direction * M_PI/180)) + (((0.5) * armHeight + 0.5 * armLength) * sin(direction * M_PI/180));
+        return gX + ((0.5) * armHeight * cos(direction * M_PI/180) * cos(armTheta * M_PI/180)) + (((0.5) * armHeight + 0.5 * armLength) * sin(direction * M_PI/180));
+    };
+
+    GLfloat getRightArmY()
+    {
+        return gY + loLegHeight + upLegHeight + torsoHeight + armLength + ((0.5 * armHeight) * sin(armTheta*M_PI/180)); //- head_radius  + (sin(armTheta*M_PI/180));
     };
 
     GLfloat getRightArmZ()
     {
-        return gZ + ((0.5 * torsoWidth) + (0.5 * armWidth)) * cos(direction * M_PI/180) + ((0.5 * torsoWidth) + (0.5 * armWidth)) * (-1) * sin(direction * M_PI/180);
+        return gZ + ((0.5 * torsoWidth + 0.5 * armWidth) * cos(direction * M_PI/180)) + ((0.5 * armHeight) * (-1) * sin(direction * M_PI/180) * cos(armTheta * M_PI/180));
     };
 
     GLfloat getWeaponX()
@@ -313,9 +318,26 @@ public:
         jumpCounter = JUMP_COUNTER_MAX;
     };
 
-    void Shoot()
+    void Shoot();
+
+    void addBullet()
     {
-        drawShot();
+        shots_fired--;
+    };
+
+    bool checkBulletValidity(unsigned int i)
+    {
+        return shots[i].checkValidity();
+    };
+
+    void drawBullet(unsigned int i)
+    {
+        shots[i].Draw();
+    };
+
+    void moveBullet(unsigned int i)
+    {
+        shots[i].Move();
     };
     
 };

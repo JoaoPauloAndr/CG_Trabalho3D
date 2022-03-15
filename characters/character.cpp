@@ -365,28 +365,59 @@ void Character::Jump()
     MoveY(jump_val);
 }
 
-void Character::drawShot()
+void Character::Shoot()
 {
-    glPushMatrix();
-        printf("Direction = %.2f\n", direction);
-        // printf("gZ + armHeight = %.2f\n", gZ + armHeight);
-        printf("getWeaponZ = %.2f\n\n", getWeaponZ());
-        glTranslatef(getWeaponX(),getWeaponY(),getWeaponZ());
-        glShadeModel(GL_SMOOTH);
+    // glPushMatrix();
+    //     printf("Direction = %.2f\n", direction);
+    //     // printf("gZ + armHeight = %.2f\n", gZ + armHeight);
+    //     //printf("getWeaponZ = %.2f\n\n", getWeaponZ());
+    //     glTranslatef(getWeaponX(),getWeaponY(),getWeaponZ());
+    //     glShadeModel(GL_SMOOTH);
 
-        GLfloat materialEmission[] = { 1.00, 0.25, 0.00, 1};
-        GLfloat materialColor[] = { 1.0, 1.0, 0.0, 1};
-        GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1};
-        GLfloat mat_shininess[] = { 50.0 };
-        glColor3f(0,1,0);
+    //     GLfloat materialEmission[] = { 1.00, 0.25, 0.00, 1};
+    //     GLfloat materialColor[] = { 1.0, 1.0, 0.0, 1};
+    //     GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1};
+    //     GLfloat mat_shininess[] = { 50.0 };
+    //     glColor3f(0,1,0);
 
-        glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
-        glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, materialColor);
-        glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-        glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+    //     glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
+    //     glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, materialColor);
+    //     glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    //     glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 
-        glutSolidSphere(SHOT_RADIUS, 20, 10);
+    //     glutSolidSphere(SHOT_RADIUS, 20, 10);
 
-        glShadeModel(GL_FLAT);
-    glPopMatrix();
+    //     glShadeModel(GL_FLAT);
+    // glPopMatrix();
+
+    printf("Shots fired = %d\n", shots_fired);
+    if(shots_fired < 10)
+    {
+        int i;
+        for(i = 0; i < BULLET_QTY; i++)
+        {
+            if(!shots[i].checkValidity())
+                break;
+        }
+        if(i > BULLET_QTY - 1)
+            i = 0;
+        Shot s;
+        s.Shot_Init
+        (
+            getWeaponX(),
+            getWeaponY(),
+            getWeaponZ(),
+            (GLfloat)direction,
+            armTheta,
+            2 * VEL,
+            i
+        );
+        s.Draw();
+        shots[i] = s;            
+        shots_fired = shots_fired + 1;;                        
+    }
+    else
+    {
+        printf("Outta bullets!\n");
+    }
 }
