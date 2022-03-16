@@ -15,7 +15,7 @@
 TODO:
   - Win (end of arena)
   - Display message and freeze the game
-  - Shoot
+  - Shoot (implement validation)
   - Illumination
   - Lights out mode
 */
@@ -172,10 +172,10 @@ void idle(void)
     player.resetJump();
   }
 
-  if(keyStatus[(int)('v')])
-  {
-    player.MoveY(-INC_DY);
-  }
+  // if(keyStatus[(int)('v')])
+  // {
+  //   player.MoveY(-INC_DY);
+  // }
 
   //Control camera rotation
   if(keyStatus[(int)('x')] && camera_mode == 3)
@@ -184,7 +184,6 @@ void idle(void)
   }
 
   player.HandleInput(isRunning, vel);
-  //player.Shoot();
 }
 
 void display(void)
@@ -228,8 +227,10 @@ void display(void)
   glLightfv(  GL_LIGHT0, GL_POSITION, light_position);*/
 
   //Lightning
+  //GLfloat light_position[] = {player.getWeaponX(), player.getWeaponY(), player.getWeaponZ(), 1};
   GLfloat light_position[] = {arena_info.length/2, arena_info.height, arena_info.width/2, 1};
   glLightfv(GL_LIGHT0,GL_POSITION,light_position);
+  
   /*glDisable(GL_LIGHTING);
       glPointSize(15);
       glColor3f(1.0,1.0,0.0);
@@ -237,6 +238,28 @@ void display(void)
           glVertex3f(light_position[0],light_position[1],light_position[2]);
       glEnd();    
   glEnable(GL_LIGHTING);*/
+
+  //Draw shots
+  unsigned int validShots_len = player.getValidShotsSize();
+  unsigned int shots[validShots_len]; 
+  player.getValidShots(shots);
+  GLfloat x, y, z;
+  
+  for(int i = 0; i < validShots_len; i++)
+  {
+    player.getShotPos(shots[i], x, y, z);
+    if(x < 0 || x > arena_info.length ||
+       y < 0 || y > arena_info.height ||
+       z < 0 || z > arena_info.width)
+    {
+      player.invalidateShot(shots[i]);
+    }
+    else
+    {
+      player.moveBullet(shots[i]);
+      player.drawBullet(shots[i]);
+    }   
+  }
 
   //Platforms
   glPushMatrix();
@@ -254,16 +277,17 @@ void display(void)
     shoot = false;
   }
 
-  //Draw shots
-  for(unsigned int i = 0; i < BULLET_QTY; i++)
-  {
-    if(player.checkBulletValidity(i))
-    {
-      player.moveBullet(i);
-      player.drawBullet(i);
-    }
-  }
+  // //Draw shots
+  // for(unsigned int i = 0; i < BULLET_QTY; i++)
+  // {
+  //   if(player.checkBulletValidity(i))
+  //   {
+  //     player.moveBullet(i);
+  //     player.drawBullet(i);
+  //   }
+  // }
 
+  //printf("gZ = %.2f\n", player.getZ());
   // glPushMatrix();
   //       //printf("Direction = %.2f\n", direction);
   //       // printf("gZ + armHeight = %.2f\n", gZ + armHeight);
@@ -314,11 +338,14 @@ void init()
 
 void mouse(int button, int state, int x, int y)
 {
-    if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+    if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+    {
         //if(!shot) shot = player.Shoot();
         shoot = true;
         //printf("Pew\n");
-    }else if(button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN){
+    }
+    else if(button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+    {
       //player.Jump();
     }
     if(camera_rotation)
@@ -354,9 +381,12 @@ void motion(int x, int y)
   {
     int delta = y - mouseAim;
     mouseAim = y;
-    if(delta < 0){
+    if(delta < 0)
+    {
       player.moveArm(INC_ANGLE);
-    }else if(delta > 0){
+    }
+    else if(delta > 0)
+    {
       player.moveArm(-INC_ANGLE);
     }
   }
@@ -396,7 +426,7 @@ int main(int argc, char *argv[])
     glutPassiveMotionFunc(motion); 
 
     glutMainLoop();
-    return 0; 
+    //return 0; 
   }
   else
   {

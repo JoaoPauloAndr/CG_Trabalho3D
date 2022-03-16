@@ -69,7 +69,23 @@ void colision(GLfloat platformX, GLfloat platformY, GLfloat platformBottom, GLfl
     {
         if(!*prevCol && !(inRange(platformX, platformBack, charac->getX())))
             charac->unsetBottomColision(j);
-    }     
+    }
+
+    //shots colision
+    unsigned int validShots_len = charac->getValidShotsSize();
+    unsigned int shots[validShots_len]; 
+    charac->getValidShots(shots);
+    GLfloat x, y, z;
+    
+    for(int i = 0; i < validShots_len; i++)
+    {
+        charac->getShotPos(shots[i], x, y, z);
+        if(inRange(platformX, platformBack, x) &&
+           inRange(platformBottom, platformY, y))
+        {
+            charac->invalidateShot(shots[i]);
+        }   
+    }    
 }
 
 void drawPlatforms(Platforms platforms, GLfloat arenaWidth, Character *player)

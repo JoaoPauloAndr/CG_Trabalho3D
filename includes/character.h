@@ -8,23 +8,21 @@
 #include <GL/glu.h>
 #include <GL/glut.h>
 #include <random>
+#include <bits/stdc++.h>
 #include "shot.h"
 
 #define ARM_ANGLE_LIMIT     45
 #define SCALE               0.75
-//#define LEFT_ARM_ANGLE_LIMIT 23
 #define VEL                 0.75
 #define INC_DY              3
 #define JUMP_COUNTER_MAX    1.0//20
 #define GRAVITY             0.7
-#define INC_DIRECTION       1
+#define INC_DIRECTION       3
 #define LEG_ANGLE_UP_LIMIT  35
 #define LEG_ANGLE_LO_LIMIT -30
 #define INC_ANGLE           3
 #define INC_ANGLE_UP_LEG    2
 #define BULLET_QTY          10
-//#define SHOT_RADIUS         0.2
-//#define INC_LEFT_ARM_ANGLE  0.75
 
 class Character
 {
@@ -54,6 +52,7 @@ class Character
     GLfloat jumpCounter;
     Shot    shots[BULLET_QTY];
     unsigned int shots_fired;
+    std::list<unsigned int> validShots;
     bool frontColision;
     bool backColision;
     bool topColision;
@@ -320,9 +319,10 @@ public:
 
     void Shoot();
 
-    void addBullet()
+    void invalidateShot(unsigned int i)
     {
-        shots_fired--;
+        validShots.remove(i);
+        shots_fired = validShots.size();
     };
 
     bool checkBulletValidity(unsigned int i)
@@ -339,6 +339,17 @@ public:
     {
         shots[i].Move();
     };
-    
+
+    unsigned int getValidShotsSize()
+    {
+        return validShots.size();
+    };
+
+    void getValidShots(unsigned int *arr);
+
+    void getShotPos(unsigned int i, GLfloat &x, GLfloat &y, GLfloat &z)
+    {   
+        shots[i].getPos(x, y, z);    
+    };
 };
 #endif

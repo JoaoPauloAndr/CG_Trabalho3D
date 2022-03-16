@@ -4,8 +4,10 @@
 #include <GL/glu.h>
 #include <GL/glut.h>
 #include <math.h>
+#include <stdio.h>
 
 #define SHOT_RADIUS         0.2
+#define SHOT_VEL_MULTIPLIER 6
 
 class Shot
 {
@@ -50,7 +52,7 @@ public:
         gZ = z;
         gDirection = direction;
         gTheta = theta;
-        gvel = vel;
+        gvel = SHOT_VEL_MULTIPLIER * vel;
         valid = true;
         id = i;
     };

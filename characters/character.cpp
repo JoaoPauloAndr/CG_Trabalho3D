@@ -237,15 +237,17 @@ void Character::HandleInput(bool isRunning, GLfloat vel)
         if(upperLegAngle <= LEG_ANGLE_LO_LIMIT || upperLegAngle >= LEG_ANGLE_UP_LIMIT)
             upperLegDelta = -upperLegDelta;
 
-        /*leftArmAngle += leftArmDelta;
-        if(leftArmAngle <= 0 || upperLegAngle >= LEF_ARM_ANGLE_LIMIT)
-            leftArmDelta = -leftArmDelta;*/
     }
     else
     {
         idle = true;
         running = false;
     }
+
+    // for(auto itr = validShots.begin(); itr != validShots.end(); itr++)
+    // {
+    //     printf("Shot[%d] is valid\n", *itr);
+    // }
 }
 
 void Character::RotateZ(GLfloat ang)
@@ -367,31 +369,7 @@ void Character::Jump()
 
 void Character::Shoot()
 {
-    // glPushMatrix();
-    //     printf("Direction = %.2f\n", direction);
-    //     // printf("gZ + armHeight = %.2f\n", gZ + armHeight);
-    //     //printf("getWeaponZ = %.2f\n\n", getWeaponZ());
-    //     glTranslatef(getWeaponX(),getWeaponY(),getWeaponZ());
-    //     glShadeModel(GL_SMOOTH);
-
-    //     GLfloat materialEmission[] = { 1.00, 0.25, 0.00, 1};
-    //     GLfloat materialColor[] = { 1.0, 1.0, 0.0, 1};
-    //     GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1};
-    //     GLfloat mat_shininess[] = { 50.0 };
-    //     glColor3f(0,1,0);
-
-    //     glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
-    //     glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, materialColor);
-    //     glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-    //     glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-
-    //     glutSolidSphere(SHOT_RADIUS, 20, 10);
-
-    //     glShadeModel(GL_FLAT);
-    // glPopMatrix();
-
-    printf("Shots fired = %d\n", shots_fired);
-    if(shots_fired < 10)
+    if(shots_fired < BULLET_QTY)
     {
         int i;
         for(i = 0; i < BULLET_QTY; i++)
@@ -409,15 +387,26 @@ void Character::Shoot()
             getWeaponZ(),
             (GLfloat)direction,
             armTheta,
-            2 * VEL,
+            VEL,
             i
         );
         s.Draw();
         shots[i] = s;            
-        shots_fired = shots_fired + 1;;                        
+        shots_fired++;
+        validShots.push_back(i);                       
     }
     else
     {
         printf("Outta bullets!\n");
+    }
+}
+
+void Character::getValidShots(unsigned int *arr)
+{
+    int i = 0;
+    for(auto itr = validShots.begin(); itr != validShots.end(); itr++)
+    {
+        arr[i] = *itr;
+        i++;
     }
 }

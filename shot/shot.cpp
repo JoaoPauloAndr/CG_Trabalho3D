@@ -25,9 +25,9 @@ void Shot::DrawShot(GLfloat x, GLfloat y, GLfloat z)
 
 void Shot::Move()
 {
-    GLfloat xInc = (gvel * SHOT_RADIUS * cos(gDirection * M_PI/180) * cos(gTheta * M_PI/180)) + (gvel * SHOT_RADIUS * sin(gDirection * M_PI/180));
+    GLfloat xInc = (gvel * SHOT_RADIUS * cos(gDirection * M_PI/180));//* cos(gTheta * M_PI/180) + (gvel * SHOT_RADIUS * sin(gDirection * M_PI/180));
     GLfloat yInc = gvel * SHOT_RADIUS * sin(gTheta * M_PI/180);
-    GLfloat zInc = (gvel * SHOT_RADIUS * cos(gDirection * M_PI/180)) + (gvel * SHOT_RADIUS * (-1) * sin(gDirection * M_PI/180) * cos(gTheta * M_PI/180));
+    GLfloat zInc = (gvel * SHOT_RADIUS * (-1) * sin(gDirection * M_PI/180)); //+ (gvel * SHOT_RADIUS * (-1) * cos(gDirection * M_PI/180) * cos(gTheta * M_PI/180));
 
     gX += xInc;
     gY += yInc;
