@@ -8,6 +8,8 @@
 #include "includes/game_platforms.h"
 #include "includes/character.h"
 #include "includes/player.h"
+#include "includes/print_messages.h"
+#include "includes/enemy.h"
 
 /*
 *
@@ -15,7 +17,6 @@
 TODO:
   - Win (end of arena)
   - Display message and freeze the game
-  - Shoot (implement validation)
   - Illumination
   - Lights out mode
 */
@@ -26,8 +27,12 @@ Enemies_info enemies_info;
 Character_info player_info;
 Player player;
 Player *pPlayer = &player; 
+Enemy *enemies;
+unsigned int enemies_alive;
+unsigned int n_enemies = 0;
 
 bool shoot = false;
+bool win = false;
 
 //Key status
 int keyStatus[256];
@@ -48,6 +53,36 @@ double camXZAngle= -90;
 int lastCamX = 0;
 int lastCamY = 0;
 int zoom = (SCALE - 0.3) * 40;
+
+void charactersInit()
+{
+  player.Init(player_info.starting_point.x, 
+                arena_info.length,
+                arena_info.width,
+                player_info.head_radius
+  );
+
+  enemies = new Enemy[enemies_info.size()];
+  enemies_alive, n_enemies = enemies_info.size();
+  int i = 0;
+  for(auto e: enemies_info)
+  {
+    enemies[i].Init(
+      e.starting_point.x,
+      e.starting_point.y,
+      arena_info.length,
+      arena_info.width,
+      e.head_radius
+    );
+    i++;
+    enemies[i].setDirection(180);
+  }            
+}
+
+void deleteEnemies()
+{
+  delete(enemies);
+}
 
 void keyPress(unsigned char key, int x, int y)
 {
@@ -95,7 +130,7 @@ void keyPress(unsigned char key, int x, int y)
       case 'x':
       case 'X':
             keyStatus[(int)('x')] = 1;
-            break;
+            break;      
       case '+':
         zoom++;
         break;
@@ -125,6 +160,12 @@ void keyup(unsigned char key, int x, int y)
 void idle(void)
 {
   camera_rotation = false;
+
+  //Control camera rotation
+  if(keyStatus[(int)('x')] && camera_mode == 3)
+  {
+    camera_rotation = true;
+  }
   
   //MoveX
   bool isRunning = false;
@@ -172,18 +213,24 @@ void idle(void)
     player.resetJump();
   }
 
-  // if(keyStatus[(int)('v')])
-  // {
-  //   player.MoveY(-INC_DY);
-  // }
-
-  //Control camera rotation
-  if(keyStatus[(int)('x')] && camera_mode == 3)
+  if(keyStatus[(int)('r')] && win) // || lose
   {
-    camera_rotation = true;
+    win = false;
+    charactersInit();
   }
 
+
   player.HandleInput(isRunning, vel);
+
+  for(int i = 0; i < n_enemies; i ++)
+  {
+    enemies[i].HandleInput(false,0);
+  }  
+
+  if(player.getX() >= arena_info.length - 10)
+  {
+    win = true;
+  }
 }
 
 void display(void)
@@ -228,6 +275,7 @@ void display(void)
 
   //Lightning
   //GLfloat light_position[] = {player.getWeaponX(), player.getWeaponY(), player.getWeaponZ(), 1};
+  //glLightfv(GL_LIGHT0,GL_SPOT_DIRECTION,light_position);
   GLfloat light_position[] = {arena_info.length/2, arena_info.height, arena_info.width/2, 1};
   glLightfv(GL_LIGHT0,GL_POSITION,light_position);
   
@@ -263,7 +311,7 @@ void display(void)
 
   //Platforms
   glPushMatrix();
-    drawPlatforms(platforms, arena_info.width, pPlayer);
+    drawPlatforms(platforms, arena_info.width, pPlayer, enemies, n_enemies);
   glPopMatrix();
 
   //Characters
@@ -271,10 +319,22 @@ void display(void)
     player.Draw();
   glPopMatrix();
 
+  for(int i = 0; i < n_enemies; i++)
+  {
+    glPushMatrix();
+      enemies[i].Draw();
+    glPopMatrix();
+  }
+
   if(shoot)
   {
     player.Shoot();
     shoot = false;
+  }
+
+  if(win)
+  {
+    printWonGame(player.getX()+5, player.getY()+3, player.getZ()-8);
   }
 
   // //Draw shots
@@ -321,7 +381,7 @@ void init()
 {
   ResetKeyStatus();
   glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
-  glShadeModel (GL_FLAT);
+  glShadeModel (GL_SMOOTH);
   glEnable(GL_CULL_FACE);
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
@@ -399,10 +459,11 @@ int main(int argc, char *argv[])
   {
     const char * filename = argv[1];    
     readXml(filename, &arena_info, platforms, enemies_info, &player_info);
-    player.Init(player_info.starting_point.x, 
-                arena_info.length,
-                arena_info.width,
-                player_info.head_radius);
+    // player.Init(player_info.starting_point.x, 
+    //             arena_info.length,
+    //             arena_info.width,
+    //             player_info.head_radius);
+    charactersInit();
 
     //Initialize openGL
     glutInit(&argc, argv);
@@ -431,6 +492,7 @@ int main(int argc, char *argv[])
   else
   {
     printf("Arquivo não especificado.\n");
-  }   
+  }
+  deleteEnemies();   
   return 0;
 }

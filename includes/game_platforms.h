@@ -6,7 +6,16 @@
 #include <GL/glut.h>
 #include "info.h"
 #include "character.h"
+#include "enemy.h"
 
-void drawPlatforms(Platforms platforms, GLfloat arenaWidth, Character *player); //std::vector<Platform> Platforms
+struct platform_specs
+{
+    GLfloat platformX;
+    GLfloat platformY;
+    GLfloat platformBottom;
+    GLfloat platformBack;
+};
+
+void drawPlatforms(Platforms platforms, GLfloat arenaWidth, Character *player, Enemy *enemies, unsigned int n_enemies); //std::vector<Platform> Platforms
 
 #endif

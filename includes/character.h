@@ -50,6 +50,14 @@ class Character
     GLfloat upperLegDelta;
     GLfloat gravityCounter;
     GLfloat jumpCounter;
+    //Character colors
+    GLfloat headEmission[4];
+    GLfloat headColor[4];
+    GLfloat torsoEmission[4];
+    GLfloat torsoColor[4];
+    GLfloat legEmission[4];
+    GLfloat legColor[4];
+    //GLfloat[4] headColor;
     Shot    shots[BULLET_QTY];
     unsigned int shots_fired;
     std::list<unsigned int> validShots;
@@ -64,7 +72,7 @@ class Character
     bool isJumping;
 private:
     void DrawCharacter(GLfloat gX, GLfloat gY, GLfloat head_radius);
-    void DrawHead(GLfloat head_radius);
+    virtual void DrawHead(GLfloat head_radius);
     void DrawLegs();
     void DrawLeftLeg();
     void DrawRightLeg();
@@ -77,6 +85,12 @@ private:
     void drawShot();
 public:
     Character()
+    : headEmission{0.00, 0.25, 0.00, 1},
+      headColor{ 0.0, 1.0, 0.0, 1},
+      torsoEmission{ 0.6, 0.6, 0.6, 1},
+      torsoColor{ 1.0, 1.0, 1.0, 1},
+      legEmission{ 0.12, 0.20, 0.35, 1},
+      legColor{ 0.2, 0.56, 1, 1}
     {
         gX          = 0;
         gY          = 0;
@@ -94,8 +108,6 @@ public:
         armWidth    = 0;
         armHeight   = 0;
         armTheta    = 0;
-        //leftArmAngle = 0;
-        //leftArmDelta = INC_LEFT_ARM_ANGLE;
         direction   = 0;
         upperLegAngle = 0;
         upperLegDelta = INC_ANGLE_UP_LEG;
@@ -118,7 +130,7 @@ public:
         DrawCharacter(gX, gY, head_radius);
     };
 
-    void Init(GLfloat x, GLfloat length, GLfloat width, GLfloat radius)
+    virtual void Init(GLfloat x, GLfloat length, GLfloat width, GLfloat radius)
     {   
         gX = x;
         gY = 0; //y
@@ -142,6 +154,64 @@ public:
         armLength = SCALE * 0.5 * head_radius;
         armWidth = SCALE * armLength;
         armHeight = SCALE * 2.2 * head_radius;
+        //for re initialization
+        direction   = 0;
+        upperLegAngle = 0;
+        upperLegDelta = INC_ANGLE_UP_LEG;
+        gravityCounter = 0;
+        jumpCounter = JUMP_COUNTER_MAX;
+        shots_fired = 0;
+        frontColision = false;
+        backColision = false;
+        topColision = false;
+        bottomColision = false;
+        idle = true;
+        running = false;
+        isGrounded = true;
+        isJumping = false;
+        platformID = -1;
+    };
+
+    virtual void Init(GLfloat x, GLfloat y, GLfloat length, GLfloat width, GLfloat radius)
+    {   
+        gX = x;
+        gY = y - radius;
+        //generate random value to set as gZ
+        std::random_device rd; // obtain a random number from hardware
+        std::mt19937 gen(rd()); // seed the generator
+        std::uniform_real_distribution<> distr(10, width-10); // define the range
+        gZ = distr(gen);
+        arenaWidth = width;
+        arenaLength = length;
+        head_radius = (SCALE - 0.45) * radius;
+        loLegLength = SCALE * 0.5 * head_radius;
+        loLegWidth = SCALE * loLegLength;
+        loLegHeight = SCALE * 2 * head_radius;
+        upLegLength = SCALE * 0.8 * head_radius;
+        upLegWidth = SCALE * 0.8 * head_radius;
+        upLegHeight = SCALE * 2.2 * head_radius;
+        torsoLength = SCALE * head_radius;
+        torsoWidth = SCALE * 2.3 * head_radius;
+        torsoHeight = SCALE * 3 * head_radius;
+        armLength = SCALE * 0.5 * head_radius;
+        armWidth = SCALE * armLength;
+        armHeight = SCALE * 2.2 * head_radius;
+        //for re initialization
+        direction   = 0;
+        upperLegAngle = 0;
+        upperLegDelta = INC_ANGLE_UP_LEG;
+        gravityCounter = 0;
+        jumpCounter = JUMP_COUNTER_MAX;
+        shots_fired = 0;
+        frontColision = false;
+        backColision = false;
+        topColision = false;
+        bottomColision = false;
+        idle = true;
+        running = false;
+        isGrounded = true;
+        isJumping = false;
+        platformID = -1;
     };
 
     void HandleInput(bool isRunning, GLfloat vel);
@@ -351,5 +421,16 @@ public:
     {   
         shots[i].getPos(x, y, z);    
     };
+
+    //For enemy setup
+    void setDirection(GLdouble dir)
+    {
+        direction += dir;
+    };
+
+    // void setHeadColor(GLfloat arr[4])
+    // {
+    //     headColor = arr;
+    // };
 };
 #endif

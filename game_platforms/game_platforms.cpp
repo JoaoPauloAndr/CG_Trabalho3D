@@ -5,8 +5,15 @@ bool inRange(GLfloat low, GLfloat high, GLfloat x)
     return  (low <= x && x <= high);
 }
 
-void colision(GLfloat platformX, GLfloat platformY, GLfloat platformBottom, GLfloat platformBack, Character *charac, bool *prevCol, int j)
+//GLfloat platformX, GLfloat platformY, GLfloat platformBottom, GLfloat platformBack
+void colision(platform_specs specs, Character *charac, bool *prevCol, 
+              Enemy *enemies, bool *enemiesColisions, unsigned int n_enemies, int j)
 {
+    GLfloat platformX = specs.platformX;
+    GLfloat platformY = specs.platformY;
+    GLfloat platformBottom = specs.platformBottom;
+    GLfloat platformBack = specs.platformBack;
+
     GLfloat charFront = charac->getFront();
     GLfloat charBack = charac->getBack();
     GLfloat charBottom = charac->getY();
@@ -85,12 +92,97 @@ void colision(GLfloat platformX, GLfloat platformY, GLfloat platformBottom, GLfl
         {
             charac->invalidateShot(shots[i]);
         }   
+    }
+
+    //Enemies Colision
+    for(int n = 0; n < n_enemies; n++)
+    {
+        GLfloat enemyFront = enemies[n].getFront();
+        GLfloat enemyBack = enemies[n].getBack();
+        GLfloat enemyBottom = enemies[n].getY();
+        GLfloat enemyTop = enemies[n].getTop();
+
+        //Front colision
+        if(enemyFront >= platformX && enemyFront < platformBack 
+            && (inRange(platformBottom, platformY, charTop) ||
+                inRange(platformBottom, platformY, enemyBottom) ||
+                inRange(enemyBottom, enemyTop, platformY)))
+        {
+            enemiesColisions[n] = true;
+            enemies[n].setFrontColision();
+        }
+        else
+        {
+            if(!enemiesColisions[n])
+                enemies[n].unsetFrontColision();
+        }
+
+        //Back colision
+        if(enemyBack > platformX && enemyBack <= platformBack 
+            && (inRange(platformBottom, platformY, enemyTop) ||
+                inRange(platformBottom, platformY, enemyBottom) ||
+                inRange(enemyBottom, enemyTop, platformY)))
+        {
+            enemiesColisions[n] = true;
+            enemies[n].setBackColision();
+        }
+        else
+        {
+            if(!enemiesColisions[n])
+                enemies[n].unsetBackColision();
+        }
+
+        //Top colision
+        if(enemyTop >= platformBottom && enemyTop < platformY 
+        && (inRange(platformX, platformBack, enemyFront) &&
+            inRange(platformX, platformBack, enemyBack)))
+        {
+            enemiesColisions[n] = true;
+            enemies[n].setTopColision();
+        }
+        else
+        {
+            if(!enemiesColisions[n])
+                enemies[n].unsetTopColision();
+        }
+
+        //Bottom colision
+        if(enemyBottom <= platformY && enemyBottom > platformBottom 
+        && (inRange(platformX, platformBack, enemyFront) &&
+            inRange(platformX, platformBack, enemyBack)))
+        {
+            enemiesColisions[n] = true;
+            enemies[n].setBottomColision(j);
+            enemies[n].setNewGY(platformY+0.01);
+        }
+        else
+        {
+            if(!enemiesColisions[n] && !(inRange(platformX, platformBack, enemies[n].getX())))
+                enemies[n].unsetBottomColision(j);
+        }
+
+        //shots colision
+        unsigned int validShots_len = enemies[n].getValidShotsSize();
+        unsigned int shots[validShots_len]; 
+        enemies[n].getValidShots(shots);
+        GLfloat x, y, z;
+        
+        for(int i = 0; i < validShots_len; i++)
+        {
+            enemies[n].getShotPos(shots[i], x, y, z);
+            if(inRange(platformX, platformBack, x) &&
+            inRange(platformBottom, platformY, y))
+            {
+                enemies[n].invalidateShot(shots[i]);
+            }   
+        }
     }    
 }
 
-void drawPlatforms(Platforms platforms, GLfloat arenaWidth, Character *player)
+void drawPlatforms(Platforms platforms, GLfloat arenaWidth, Character *player, Enemy *enemies, unsigned int n_enemies)
 {
     bool previousColision = false;
+    bool enemiesColisions[n_enemies] = {false};
     int j = 0;
     GLfloat materialEmission[] = { 0.15, 0.15, 0.00, 1.0};
     GLfloat materialColor[] = { 1.0, 1.0, 0.0, 1.0};
@@ -117,7 +209,9 @@ void drawPlatforms(Platforms platforms, GLfloat arenaWidth, Character *player)
 
         glPopMatrix();
 
-        colision(platformX, platformY, platformY - platformHeight, platformX + platformWidth, player, &previousColision, j);
+        platform_specs specs = {platformX, platformY, platformY - platformHeight, platformX + platformWidth};
+
+        colision(specs, player, &previousColision, enemies, enemiesColisions, n_enemies, j);
         j++;
     }
 }

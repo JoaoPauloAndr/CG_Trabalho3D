@@ -51,7 +51,7 @@ void readXml(const char * xmlFile,
           GLfloat head_radius = atof(element->Attribute("r"));
           GLfloat cx = atof(element->Attribute("cx"));
           GLfloat cy = atof(element->Attribute("cy"));
-          GLfloat x = (cx < 0) ? arena_info->origin.x + cx : arena_info->origin.x - cx;
+          GLfloat x = arena_info->origin.x + cx; //(cx < 0) ? arena_info->origin.x + cx : arena_info->origin.x - cx;
           GLfloat y = arena_info->origin.y - cy;
           Character_info enemyInfo;
           enemyInfo.starting_point.x = x;
@@ -64,7 +64,7 @@ void readXml(const char * xmlFile,
           player_info->head_radius = atof(element->Attribute("r"));
           GLfloat cx = atof(element->Attribute("cx"));
           GLfloat cy = atof(element->Attribute("cy"));
-          player_info->starting_point.x = (cx < 0) ? arena_info->origin.x + cx : arena_info->origin.x - cx;
+          player_info->starting_point.x = arena_info->origin.x + cx;//(cx < 0) ? arena_info->origin.x + cx : arena_info->origin.x - cx;
           player_info->starting_point.y = arena_info->origin.y - cy;
         }
       }

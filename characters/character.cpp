@@ -4,14 +4,14 @@ void Character::DrawHead(GLfloat head_radius)
 {
     glShadeModel(GL_SMOOTH);
 
-    GLfloat materialEmission[] = { 0.00, 0.25, 0.00, 1};
-    GLfloat materialColor[] = { 0.0, 1.0, 0.0, 1};
+    // GLfloat materialEmission[] = { 0.00, 0.25, 0.00, 1};
+    // GLfloat materialColor[] = { 0.0, 1.0, 0.0, 1};
     GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1};
     GLfloat mat_shininess[] = { 50.0 };
     glColor3f(0,1,0);
 
-    glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, materialColor);
+    glMaterialfv(GL_FRONT, GL_EMISSION, headEmission);
+    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, headColor);
     glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
     glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 
@@ -58,12 +58,12 @@ void Character::DrawArms()
 void Character::DrawTorso()
 {
     glPushMatrix();
-        GLfloat materialEmission[] = { 0.6, 0.6, 0.6, 1};
-        GLfloat materialColor[] = { 1.0, 1.0, 1.0, 1};
+        // GLfloat materialEmission[] = { 0.6, 0.6, 0.6, 1};
+        // GLfloat materialColor[] = { 1.0, 1.0, 1.0, 1};
         GLfloat mat_specular[] = { 0.0, 0.0, 0.0, 1};
         GLfloat mat_shininess[] = { 50.0 };
-        glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
-        glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, materialColor);
+        glMaterialfv(GL_FRONT, GL_EMISSION, torsoEmission);
+        glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, torsoColor);
         glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
         glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 
@@ -80,12 +80,12 @@ void Character::DrawLeftLeg()
         glRotatef(-upperLegAngle, 0, 0, 1);
         glTranslatef(0, (-0.5)*upLegHeight, 0);
 
-        GLfloat materialEmission[] = { 0.12, 0.20, 0.35, 1};
-        GLfloat materialColor[] = { 0.2, 0.56, 1, 1};
+        // GLfloat materialEmission[] = { 0.12, 0.20, 0.35, 1};
+        // GLfloat materialColor[] = { 0.2, 0.56, 1, 1};
         GLfloat mat_specular[] = { 0.0, 0.5, 0.1, 1};
         GLfloat mat_shininess[] = { 50.0 };
-        glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
-        glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, materialColor);
+        glMaterialfv(GL_FRONT, GL_EMISSION, legEmission);
+        glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, legColor);
         glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
         glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 
@@ -121,12 +121,12 @@ void Character::DrawRightLeg()
         glRotatef(upperLegAngle, 0, 0, 1);
         glTranslatef(0, (-0.5)*upLegHeight, 0);
 
-        GLfloat materialEmission[] = { 0.12, 0.20, 0.35, 1};
-        GLfloat materialColor[] = { 0.2, 0.56, 1, 1};
+        // GLfloat materialEmission[] = { 0.12, 0.20, 0.35, 1};
+        // GLfloat materialColor[] = { 0.2, 0.56, 1, 1};
         GLfloat mat_specular[] = { 0.0, 0.5, 0.1, 1};
         GLfloat mat_shininess[] = { 50.0 };
-        glMaterialfv(GL_FRONT, GL_EMISSION, materialEmission);
-        glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, materialColor);
+        glMaterialfv(GL_FRONT, GL_EMISSION, legEmission);
+        glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, legColor);
         glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
         glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 
